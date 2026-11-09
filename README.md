@@ -24,23 +24,30 @@ A modern, responsive single-page application (SPA) that showcases a creative age
 
 ## Getting Started
 
+### Prerequisites
+
+- **Node.js 18+** (Node 20 LTS recommended) — check with `node -v`
+- **npm 9+** — ships with Node; check with `npm -v`
+
+### Install & run
+
 ```bash
 # install dependencies
 npm install
 
-# start the dev server
+# start the dev server (http://localhost:5173)
 npm run dev
 
-# build for production
+# build for production (outputs to dist/)
 npm run build
 
-# preview the production build
+# preview the production build locally
 npm run preview
 
-# lint
+# lint the codebase
 npm run lint
 
-# run tests
+# run the test suite
 npm test
 
 # run tests in watch mode
@@ -50,7 +57,36 @@ npm run test:watch
 npm run test:coverage
 ```
 
-The app runs at `http://localhost:5173` by default.
+The dev server runs at `http://localhost:5173` by default. Vite will pick the next free port if 5173 is taken.
+
+## Routes
+
+| Path | Page |
+| --- | --- |
+| `/#/` | Landing page — hero + project showcase |
+| `/#/projects` | Full project list (filter + search) |
+| `/#/projects/:id` | Project detail / case study |
+| `/#/about` | Studio / about |
+| `/#/resources` | Tools & Resources |
+| `/#/contact` | Contact form |
+| `/#/add` | Add a new project |
+| `/#/studio` | Content studio (admin) |
+
+Filter and search state is stored in the URL query, e.g. `/#/projects?category=Brand%20Identity&q=lumen`.
+
+## Deployment
+
+The build is a static site — deploy the `dist/` folder to any static host.
+
+- **Netlify / Vercel:** set build command `npm run build`, publish directory `dist`.
+- **GitHub Pages:** run `npm run build`, then publish `dist/`. Because routing is hash-based, no server rewrite rules are needed.
+
+## Troubleshooting
+
+- **Port in use:** Vite auto-increments the port; check the terminal output for the actual URL.
+- **Blank page after deploy:** confirm you deployed the `dist/` folder (not the project root) and that the base path matches your host.
+- **Content looks reset:** content is stored in `localStorage` per browser. Use the Studio's **Data → Import** to restore an exported JSON backup.
+- **Tests fail on `matchMedia`/`scrollTo`:** these are shimmed in `src/test/setup.js`; ensure that file is referenced in `jest.config.js`.
 
 ## Project Structure
 
