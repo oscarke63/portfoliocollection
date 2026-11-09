@@ -1,40 +1,63 @@
-import { useHashRoute } from './hooks/useHashRoute'
-import Layout from './components/Layout'
-import Home from './pages/Home'
-import Projects from './pages/Projects'
-import ProjectDetail from './pages/ProjectDetail'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Resources from './pages/Resources'
-import AddProject from './pages/AddProject'
-import NotFound from './pages/NotFound'
-import Studio from './pages/studio/Studio'
+import { useState } from 'react'
+import './App.css'
+import { initialProjects } from './projects'
+import ProjectCard from './components/ProjectCard'
+import ProjectForm from './components/ProjectForm'
 
-function renderRoute(path, query) {
-  if (path === '/') return <Home query={query} />
-  if (path === '/projects') return <Projects query={query} />
-  if (path.startsWith('/projects/')) {
-    const id = path.slice('/projects/'.length)
-    return <ProjectDetail id={id} />
+function App() {
+  // All the app's state lives here in App.
+  const [projects, setProjects] = useState(initialProjects)
+  const [search, setSearch] = useState('')
+  const [showForm, setShowForm] = useState(false)
+
+  // Add a new project to the list.
+  function addProject(newProject) {
+    const project = {
+      id: Date.now(),
+      ...newProject,
+    }
+    setProjects([project, ...projects])
+    setShowForm(false)
   }
-  if (path === '/about') return <About />
-  if (path === '/resources') return <Resources />
-  if (path === '/contact') return <Contact />
-  if (path === '/add') return <AddProject />
-  return <NotFound />
-}
 
-export default function App() {
-  const { path, query } = useHashRoute()
-
-  // The studio is a full-screen tool, so it renders without the public chrome.
-  if (path === '/studio') {
-    return <Studio />
-  }
+  // Filter projects by the search text.
+  const filteredProjects = projects.filter((project) =>
+    project.title.toLowerCase().includes(search.toLowerCase()),
+  )
 
   return (
-    <Layout currentPath={path}>
-      {renderRoute(path, query)}
-    </Layout>
+    <div className="app">
+      <header className="header">
+        <h1>My Portfolio</h1>
+        <p>A collection of my recent projects</p>
+      </header>
+
+      <div className="controls">
+        <input
+          type="text"
+          className="search"
+          placeholder="Search projects..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button className="add-button" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Add Project'}
+        </button>
+      </div>
+
+      {showForm && <ProjectForm onAdd={addProject} />}
+
+      <div className="project-list">
+        {filteredProjects.length === 0 ? (
+          <p className="empty">No projects found.</p>
+        ) : (
+          filteredProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))
+        )}
+      </div>
+    </div>
   )
 }
+
+export default App
