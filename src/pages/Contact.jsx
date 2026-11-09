@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useContent } from '../store/content'
 import SectionHeading from '../components/SectionHeading'
 import Reveal from '../components/Reveal'
@@ -26,6 +26,13 @@ export default function Contact() {
   const [values, setValues] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | sending | sent
+  const timerRef = useRef(null)
+
+  // Clear any pending submission timer on unmount to avoid setting state
+  // on an unmounted component.
+  useEffect(() => () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current)
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -41,7 +48,7 @@ export default function Contact() {
 
     setStatus('sending')
     // Simulated submission. Swap for a real endpoint (fetch/POST) when ready.
-    setTimeout(() => {
+    timerRef.current = window.setTimeout(() => {
       setStatus('sent')
       setValues(initialForm)
     }, 900)

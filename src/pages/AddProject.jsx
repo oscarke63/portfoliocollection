@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { navigate } from '../hooks/useHashRoute'
 import { useContent } from '../store/content'
 import ProjectEditor from './studio/ProjectEditor'
@@ -7,6 +7,12 @@ import SectionHeading from '../components/SectionHeading'
 export default function AddProject() {
   const { addProject } = useContent()
   const [created, setCreated] = useState(null)
+  const timerRef = useRef(null)
+
+  // Clear the redirect timer on unmount to avoid navigating after leaving.
+  useEffect(() => () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current)
+  }, [])
 
   const handleSave = (draft) => {
     // New projects added from the public form are published by default so
@@ -14,7 +20,7 @@ export default function AddProject() {
     addProject({ ...draft, published: true })
     setCreated(draft.title)
     // Give the store a tick to commit, then jump to the project list.
-    window.setTimeout(() => {
+    timerRef.current = window.setTimeout(() => {
       navigate('/projects')
     }, 900)
   }
