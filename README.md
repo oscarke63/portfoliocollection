@@ -108,6 +108,16 @@ src/
 
 Open the **Studio** from the navbar (`/#/studio`) to manage projects and agency settings, or use the **+ Add project** button on the landing page. All changes persist in the browser and can be exported/imported as JSON from the Studio's Data tab.
 
+## State Management
+
+The app uses a clear three-tier state model:
+
+1. **Global shared state** — `ContentProvider` (`src/store/`) is the single source of truth for all content (agency + projects). It exposes a memoized, immutable action surface (`addProject`, `updateProject`, `deleteProject`, …) consumed via the `useContent()` hook. `ThemeProvider` manages light/dark theme.
+2. **URL state** — `useHashRoute` / `setQuery` keep the route, category filter, and search term in the URL, so views are shareable and survive back/forward.
+3. **Local component state** — transient UI (form drafts, menu open/closed, debounced input) lives in the component that owns it via `useState`.
+
+Shared data flows down through context; transient state stays local. No prop-drilling.
+
 ## License
 
 MIT

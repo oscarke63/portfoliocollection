@@ -2,8 +2,25 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { seedContent } from './seed'
 import { ContentContext, slugify } from './content'
 
+/**
+ * Content store — the single source of truth for all site content.
+ *
+ * State architecture (three tiers):
+ *   1. Global shared state  → this provider (content: agency + projects)
+ *   2. URL state            → useHashRoute / setQuery (route, filters, search)
+ *   3. Local component state → useState in individual components (form drafts, UI)
+ *
+ * This provider owns tier 1 only. It exposes an immutable, memoized action
+ * surface so any component can read and mutate content via useContent().
+ */
+
 const STORAGE_KEY = 'northlight-content-v1'
 
+// ---------------------------------------------------------------------------
+// Persistence helpers
+// ---------------------------------------------------------------------------
+
+/** Loads content from localStorage, falling back to seed data on any failure. */
 function loadContent() {
   if (typeof window === 'undefined') return seedContent
   try {
@@ -20,6 +37,11 @@ function loadContent() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// ID + normalization helpers
+// ---------------------------------------------------------------------------
+
+/** Generates a unique slug id, appending a counter on collision. */
 function uniqueId(base, projects, ignoreId) {
   const root = slugify(base) || 'project'
   let id = root
@@ -30,10 +52,11 @@ function uniqueId(base, projects, ignoreId) {
   return id
 }
 
+
 export function ContentProvider({ children }) {
   const [content, setContent] = useState(loadContent)
 
-  // Persist on every change.
+  // Persist the entire store to localStorage on every change.
   useEffect(() => {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(content))
@@ -42,10 +65,17 @@ export function ContentProvider({ children }) {
     }
   }, [content])
 
+  // -------------------------------------------------------------------------
+  // Actions — each is memoized with useCallback so consumers get stable refs.
+  // All updates are immutable (functional setState + spread).
+  // -------------------------------------------------------------------------
+
+  /** Merges a partial patch into the agency object. */
   const updateAgency = useCallback((patch) => {
     setContent((c) => ({ ...c, agency: { ...c.agency, ...patch } }))
   }, [])
 
+  /** Creates a new project (auto-id, normalized) and prepends it to the list. */
   const addProject = useCallback((draft) => {
     setContent((c) => {
       const id = uniqueId(draft.title || 'untitled', c.projects)
@@ -54,6 +84,7 @@ export function ContentProvider({ children }) {
     })
   }, [])
 
+  /** Applies a partial patch to the project with the given id. */
   const updateProject = useCallback((id, patch) => {
     setContent((c) => ({
       ...c,
