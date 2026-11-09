@@ -20,6 +20,7 @@ A modern, responsive single-page application (SPA) that showcases a creative age
 - **Vite** — dev server and build tool
 - **Plain CSS** — a token-based design system (no CSS framework)
 - **Hash-based routing** — dependency-free SPA routing with query-param support
+- **Jest + React Testing Library** — unit and component tests
 
 ## Getting Started
 
@@ -38,6 +39,15 @@ npm run preview
 
 # lint
 npm run lint
+
+# run tests
+npm test
+
+# run tests in watch mode
+npm run test:watch
+
+# run tests with coverage
+npm run test:coverage
 ```
 
 The app runs at `http://localhost:5173` by default.
