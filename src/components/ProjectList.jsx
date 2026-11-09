@@ -9,7 +9,7 @@ import Reveal from './Reveal'
  * Filter state is read from / written to the URL query so it survives
  * navigation and is shareable. Used by both the landing page and /projects.
  */
-export default function ProjectList({ projects, query = {}, showToolbar = true }) {
+export default function ProjectList({ projects, query = {} }) {
   const active = query.category || 'All'
   const urlSearch = query.q || ''
 
@@ -82,60 +82,56 @@ export default function ProjectList({ projects, query = {}, showToolbar = true }
 
   return (
     <div className="project-list">
-      {showToolbar && (
-        <>
-          <div className="projects-toolbar">
-            <div className="filter-chips" role="tablist" aria-label="Filter by category">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  role="tab"
-                  aria-selected={active === cat}
-                  className={`chip ${active === cat ? 'is-active' : ''}`}
-                  onClick={() => setCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-            <div className="search-box">
-              <span className="search-box__icon" aria-hidden="true">⌕</span>
-              <input
-                ref={searchRef}
-                type="search"
-                placeholder="Search projects…  ( / )"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                aria-label="Search projects"
-              />
-              {input && (
-                <button
-                  type="button"
-                  className="search-box__clear"
-                  onClick={() => { setInput(''); setQuery({ q: null }) }}
-                  aria-label="Clear search"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
+      <div className="projects-toolbar">
+        <div className="filter-chips" role="tablist" aria-label="Filter by category">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              role="tab"
+              aria-selected={active === cat}
+              className={`chip ${active === cat ? 'is-active' : ''}`}
+              onClick={() => setCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        <div className="search-box">
+          <span className="search-box__icon" aria-hidden="true">⌕</span>
+          <input
+            ref={searchRef}
+            type="search"
+            placeholder="Search projects…  ( / )"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            aria-label="Search projects"
+          />
+          {input && (
+            <button
+              type="button"
+              className="search-box__clear"
+              onClick={() => { setInput(''); setQuery({ q: null }) }}
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
 
-          <div className="results-bar">
-            <p className="results-count" aria-live="polite">
-              {filtered.length} {filtered.length === 1 ? 'project' : 'projects'}
-              {active !== 'All' && <span className="results-count__tag"> in {active}</span>}
-              {highlightTerm && <span className="results-count__tag"> matching “{highlightTerm}”</span>}
-            </p>
-            {hasFilters && (
-              <button type="button" className="results-clear" onClick={clearAll}>
-                Clear filters
-              </button>
-            )}
-          </div>
-        </>
-      )}
+      <div className="results-bar">
+        <p className="results-count" aria-live="polite">
+          {filtered.length} {filtered.length === 1 ? 'project' : 'projects'}
+          {active !== 'All' && <span className="results-count__tag"> in {active}</span>}
+          {highlightTerm && <span className="results-count__tag"> matching “{highlightTerm}”</span>}
+        </p>
+        {hasFilters && (
+          <button type="button" className="results-clear" onClick={clearAll}>
+            Clear filters
+          </button>
+        )}
+      </div>
 
       {filtered.length > 0 ? (
         <div className="project-grid">
