@@ -5,12 +5,12 @@ import ProjectCard from './components/ProjectCard'
 import ProjectForm from './components/ProjectForm'
 
 function App() {
-  // All the app's state lives here in App.
+  
   const [projects, setProjects] = useState(initialProjects)
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
 
-  // Add a new project to the list.
+  
   function addProject(newProject) {
     const project = {
       id: Date.now(),
@@ -20,7 +20,7 @@ function App() {
     setShowForm(false)
   }
 
-  // Filter projects by the search text.
+  
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(search.toLowerCase()),
   )

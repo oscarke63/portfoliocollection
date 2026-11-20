@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-// A simple form to add a new project.
+
 function ProjectForm({ onAdd }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -9,14 +9,14 @@ function ProjectForm({ onAdd }) {
   function handleSubmit(e) {
     e.preventDefault()
 
-    // Don't add a project if the title is empty.
+    
     if (title.trim() === '') {
       return
     }
 
     onAdd({ title, description, category })
 
-    // Clear the form.
+    
     setTitle('')
     setDescription('')
     setCategory('')

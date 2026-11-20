@@ -1,4 +1,4 @@
-// A simple card that shows one project.
+
 function ProjectCard({ project }) {
   return (
     <div className="project-card">
